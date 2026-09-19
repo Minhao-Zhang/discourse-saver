@@ -1,15 +1,17 @@
-name: Release
+name: Package Chrome extension
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  release:
+  package:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,20 +21,42 @@ jobs:
         id: version
         run: |
           VERSION=$(node -p "require('./raw-edition/manifest.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Zip name: discourse-saver-raw-edition-v$VERSION.zip"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "zip=discourse-saver-raw-edition-v${VERSION}.zip" >> "$GITHUB_OUTPUT"
 
       - name: Package raw-edition zip
         run: |
           cd raw-edition
-          zip -r "../discourse-saver-raw-edition-v${{ steps.version.outputs.version }}.zip" . \
+          zip -r "../${{ steps.version.outputs.zip }}" . \
             -x "*.git*" -x "*.DS_Store" -x "node_modules/*"
 
-      - name: Create Release
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: discourse-saver-raw-edition-v${{ steps.version.outputs.version }}
+          path: ${{ steps.version.outputs.zip }}
+          retention-days: 90
+
+      - name: Update latest download
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest
+          prerelease: true
+          make_latest: false
+          files: ${{ steps.version.outputs.zip }}
+          body: |
+            Built from `main`. Unzip, then Chrome → 加载已解压的扩展程序 → pick the unzipped folder.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create versioned release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
           name: v${{ steps.version.outputs.version }}
-          files: discourse-saver-raw-edition-v${{ steps.version.outputs.version }}.zip
+          files: ${{ steps.version.outputs.zip }}
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

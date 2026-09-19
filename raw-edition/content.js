@@ -53,8 +53,8 @@
     customSites: [],
 
     vaultName: '',
-    folderPath: 'Discourse收集箱',
-    addMetadata: false,
+    folderPath: 'Clippings/linuxdo',
+    addMetadata: true,
     addPostInfoCallout: false,
     calloutFollowMetadata: true,
     calloutSource: true,       calloutSourceKey: '来源',
@@ -66,21 +66,21 @@
     calloutPlatform: true,     calloutPlatformKey: '平台',
     calloutCommentCount: true, calloutCommentCountKey: '评论数',
     // 元数据字段独立勾选 + 自定义字段名（仅影响 Obsidian/语雀/思源 frontmatter，飞书/Notion 字段不受影响）
-    metaSource: true,       metaSourceKey: '来源',
-    metaTitle: true,        metaTitleKey: '标题',
-    metaAuthor: true,       metaAuthorKey: '作者',
-    metaAuthorUrl: true,
-    metaCategory: true,     metaCategoryKey: '类别',
+    metaSource: true,       metaSourceKey: 'source',
+    metaTitle: true,        metaTitleKey: 'title',
+    metaAuthor: true,       metaAuthorKey: 'author',
+    metaAuthorUrl: false,
+    metaCategory: false,    metaCategoryKey: '类别',
     metaTags: true,                              // key 固定为 tags（Obsidian 标准字段）
-    metaSaveTime: true,     metaSaveTimeKey: '保存时间',
-    metaPlatform: true,     metaPlatformKey: '平台',
-    metaReadStatus: true,   metaReadStatusKey: '阅读状态',
-    metaOrganize: true,     metaOrganizeKey: '整理',
-    metaCommentCount: true, metaCommentCountKey: '评论数',
+    metaSaveTime: true,     metaSaveTimeKey: 'created',
+    metaPlatform: false,    metaPlatformKey: '平台',
+    metaReadStatus: false,  metaReadStatusKey: '阅读状态',
+    metaOrganize: false,    metaOrganizeKey: '整理',
+    metaCommentCount: false, metaCommentCountKey: '评论数',
     includeImages: true,
-    saveComments: false,
+    saveComments: true,
     commentCount: 100,
-    saveAllComments: false,  // V4.0.6: 保存全部评论
+    saveAllComments: true,  // V4.0.6: 保存全部评论
     foldComments: false,  // V3.2: 默认不折叠，使用普通Markdown格式
     renderReactions: false,  // V1.1.2: 渲染 Reactions（打call/Boosts）为评论
     // V4.3.7: 楼层范围设置
@@ -898,7 +898,7 @@
 
     // 保存评论 toggle：读取当前状态并监听变更写回 storage
     const saveCommentsToggle = menu.querySelector('#ds-fab-save-comments');
-    chrome.storage.sync.get({ saveComments: false }, (result) => {
+    chrome.storage.sync.get({ saveComments: true }, (result) => {
       saveCommentsToggle.checked = result.saveComments;
     });
     saveCommentsToggle.addEventListener('change', () => {
@@ -2916,75 +2916,36 @@
     // 构建完整Markdown
     let markdown = '';
 
-    // 添加 frontmatter（仅影响 Obsidian/语雀/思源，飞书/Notion 字段独立，不受此处影响）
+    // 添加 frontmatter。此 fork 固定写成 vault 剪藏合同的五个键，不读设置页字段名。
     if (config.addMetadata) {
-      // 保存时间（北京时间，使用 toLocaleString 格式化）
       const now = new Date();
-      const timeStr = now.toLocaleString('zh-CN', {
-        timeZone: 'Asia/Shanghai',
-        year: 'numeric', month: '2-digit', day: '2-digit',
-        hour: '2-digit', minute: '2-digit', second: '2-digit',
-        hour12: false
-      }).replace(/\//g, '-');
+      const created = [
+        now.getFullYear(),
+        String(now.getMonth() + 1).padStart(2, '0'),
+        String(now.getDate()).padStart(2, '0')
+      ].join('-');
 
-      // 动态标签（跳过非字符串对象）
-      const allTags = [];
-      if (metadata.tags && metadata.tags.length > 0) {
-        metadata.tags.forEach(tag => {
-          // 只接受字符串类型，跳过 API 偶尔返回的对象（如 tag_groups）
-          if (typeof tag !== 'string') return;
-          const cleanTag = tag.trim();
-          if (cleanTag && !allTags.includes(cleanTag)) allTags.push(cleanTag);
-        });
-      }
-      // 去掉 YAML 内联数组不安全的字符：逗号、方括号、引号
-      const tagsArray = allTags.map(t => t.replace(/[,\[\]"']/g, '')).filter(t => t);
-      const tagsStr = tagsArray.join(', ');
+      const host = window.location.hostname.toLowerCase();
+      const sourceTag = (host === 'linux.do' || host.endsWith('.linux.do'))
+        ? 'linuxdo'
+        : host.replace(/^www\./, '').split('.')[0].replace(/[^a-z0-9_-]/gi, '') || 'discourse';
 
-      // 字段名（用户可自定义，默认中文；tags 固定为英文）
-      const k = {
-        source:      config.metaSourceKey      || '来源',
-        title:       config.metaTitleKey       || '标题',
-        author:      config.metaAuthorKey      || '作者',
-        category:    config.metaCategoryKey    || '类别',
-        saveTime:    config.metaSaveTimeKey    || '保存时间',
-        platform:    config.metaPlatformKey    || '平台',
-        readStatus:  config.metaReadStatusKey  || '阅读状态',
-        organize:    config.metaOrganizeKey    || '整理',
-        commentCount:config.metaCommentCountKey|| '评论数',
-      };
-
-      // YAML 安全字符串：含特殊字符时用双引号包裹，内部 " 转义
       function yamlStr(val) {
         if (val === null || val === undefined) return '""';
         const s = String(val);
-        // 以下情况需要引号：含 YAML 特殊字符、首尾空白、空字符串
         if (!s || /[:\[\]{}#&*!|>'"%@`,\n\r\\]/.test(s) || /^\s|\s$/.test(s)) {
           return '"' + s.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"';
         }
         return s;
       }
 
-      let fm = '---\n';
-      // URL 可能含 # 锚点，YAML 中 # 前有空格会被解析为注释，必须引号包裹
-      if (config.metaSource !== false)       fm += `${k.source}: ${yamlStr(metadata.url)}\n`;
-      if (config.metaTitle !== false)        fm += `${k.title}: ${yamlStr(metadata.title)}\n`;
-      // 作者：有主页URL时合并为 [作者名](URL) 格式，Obsidian 阅读模式可点击
-      if (config.metaAuthor !== false) {
-        const authorVal = (config.metaAuthorUrl !== false && metadata.authorUrl)
-          ? `"[${metadata.author.replace(/"/g, '\\"')}](${metadata.authorUrl})"`
-          : yamlStr(metadata.author);
-        fm += `${k.author}: ${authorVal}\n`;
-      }
-      if (config.metaCategory !== false)     fm += `${k.category}: ${yamlStr(metadata.category || '未分类')}\n`;
-      if (config.metaTags !== false)         fm += `tags: [${tagsStr}]\n`;
-      if (config.metaSaveTime !== false)     fm += `${k.saveTime}: ${timeStr}\n`;
-      if (config.metaPlatform !== false)     fm += `${k.platform}: "${detectPlatform()}"\n`;
-      if (config.metaReadStatus !== false)   fm += `${k.readStatus}: false\n`;
-      if (config.metaOrganize !== false)     fm += `${k.organize}: false\n`;
-      if (config.metaCommentCount !== false) fm += `${k.commentCount}: ${comments.length}\n`;
-      fm += '---\n\n';
-      markdown += fm;
+      markdown += '---\n';
+      markdown += `created: ${created}\n`;
+      markdown += `tags:\n  - clipping\n  - ${sourceTag}\n`;
+      markdown += `source: ${yamlStr(metadata.url)}\n`;
+      markdown += `author: ${yamlStr(metadata.author)}\n`;
+      markdown += `title: ${yamlStr(metadata.title)}\n`;
+      markdown += '---\n\n';
     }
 
     // 可选：在正文前追加 Obsidian Callout 形式的"帖子信息"引用框
@@ -3157,6 +3118,12 @@
     try {
       // 获取配置
       const config = await chrome.storage.sync.get(DEFAULT_CONFIG);
+      // 单击整帖：主帖 + 全部回复。指定楼层（数字/数组）仍走原来的楼层逻辑。
+      if (targetPostNumber == null) {
+        config.saveComments = true;
+        config.saveAllComments = true;
+        config.useFloorRange = false;
+      }
       // V4.2.3: 获取语言设置，用于 Notion 属性默认值
       const langResult = await chrome.storage.local.get(['uiLanguage']);
       const uiLang = langResult.uiLanguage || 'zh';

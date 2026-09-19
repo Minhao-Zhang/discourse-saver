@@ -47,7 +47,7 @@ const DEFAULT_CONFIG = {
 
   // Obsidian 设置
   vaultName: '',
-  folderPath: 'Discourse收集箱',
+  folderPath: 'Clippings/linuxdo',
   useAdvancedUri: true,
 
   // 飞书设置
@@ -84,7 +84,7 @@ const DEFAULT_CONFIG = {
   mdExportFolder: 'Discourse导出',
 
   // 内容设置
-  addMetadata: false,
+  addMetadata: true,
   addPostInfoCallout: false,
   calloutFollowMetadata: true,
   calloutSource: true,       calloutSourceKey: '来源',
@@ -96,17 +96,17 @@ const DEFAULT_CONFIG = {
   calloutPlatform: true,     calloutPlatformKey: '平台',
   calloutCommentCount: true, calloutCommentCountKey: '评论数',
   // 元数据字段独立勾选 + 自定义字段名（仅影响 Obsidian/语雀/思源 frontmatter，飞书/Notion 字段不受影响）
-  metaSource: true,       metaSourceKey: '来源',
-  metaTitle: true,        metaTitleKey: '标题',
-  metaAuthor: true,       metaAuthorKey: '作者',
-  metaAuthorUrl: true,  // 控制作者字段是否附带主页链接
-  metaCategory: true,     metaCategoryKey: '类别',
+  metaSource: true,       metaSourceKey: 'source',
+  metaTitle: true,        metaTitleKey: 'title',
+  metaAuthor: true,       metaAuthorKey: 'author',
+  metaAuthorUrl: false,  // 控制作者字段是否附带主页链接
+  metaCategory: false,    metaCategoryKey: '类别',
   metaTags: true,                              // key 固定为 tags
-  metaSaveTime: true,     metaSaveTimeKey: '保存时间',
-  metaPlatform: true,     metaPlatformKey: '平台',
-  metaReadStatus: true,   metaReadStatusKey: '阅读状态',
-  metaOrganize: true,     metaOrganizeKey: '整理',
-  metaCommentCount: true, metaCommentCountKey: '评论数',
+  metaSaveTime: true,     metaSaveTimeKey: 'created',
+  metaPlatform: false,    metaPlatformKey: '平台',
+  metaReadStatus: false,  metaReadStatusKey: '阅读状态',
+  metaOrganize: false,    metaOrganizeKey: '整理',
+  metaCommentCount: false, metaCommentCountKey: '评论数',
   includeImages: true,
 
   // 图片嵌入设置 (V3.6.0)
@@ -116,9 +116,9 @@ const DEFAULT_CONFIG = {
   imageSkipGif: true,
 
   // 评论设置
-  saveComments: false,
+  saveComments: true,
   commentCount: 100,
-  saveAllComments: false,
+  saveAllComments: true,
   foldComments: false,
   renderReactions: false,  // V1.1.2: 渲染 Reactions（打call/Boosts）为评论
   // V4.3.7: 楼层范围设置

@@ -414,7 +414,7 @@ const i18n = {
     },
     usage: {
       title: '使用方法：',
-      tip: '<strong>使用方法：</strong><br>- 点击悬浮保存按钮 → 保存整个帖子<br>- 长按悬浮按钮 → 选择楼层保存<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → 快捷键保存',
+      tip: '<strong>使用方法：</strong><br>- 点击悬浮保存按钮 → 保存主帖 + 全部回复<br>- 长按悬浮按钮 → 选择楼层保存<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → 快捷键保存',
       singleClick: '- 点击悬浮保存按钮 → 保存到 Obsidian/飞书/Notion/思源笔记/语雀',
       doubleClick: '- 长按悬浮按钮 → 选择楼层保存',
       shortcut: '- Ctrl+Shift+S（Mac: ⌘+Shift+S）→ 快捷键保存',
@@ -851,7 +851,7 @@ const i18n = {
     },
     usage: {
       title: 'How to Use:',
-      tip: '<strong>How to Use:</strong><br>- Click float save button → Save entire post<br>- Long press float button → Select floors to save<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → Keyboard shortcut save',
+      tip: '<strong>How to Use:</strong><br>- Click float save button → Save main post + all replies<br>- Long press float button → Select floors to save<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → Keyboard shortcut save',
       singleClick: '- Click float save button → Save to Obsidian/Feishu/Notion/SiYuan Note/Yuque',
       doubleClick: '- Long press float button → Select floors to save',
       shortcut: '- Ctrl+Shift+S (Mac: ⌘+Shift+S) → Keyboard shortcut save',

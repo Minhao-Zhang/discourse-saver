@@ -673,7 +673,7 @@
           </label>
           <div id="contentSettingsSection" class="ds-collapse-section" style="transition: max-height 0.25s ease;">
           <div class="checkbox-row">
-            <input type="checkbox" id="addMetadata">
+            <input type="checkbox" id="addMetadata" checked>
             <label for="addMetadata" data-i18n="content.addMetadata">添加元数据到笔记（Frontmatter）</label>
             <span class="info-icon" data-tooltip="在 Markdown 文件头部添加 YAML Frontmatter 元数据，包含来源、标题、作者、类别、标签等字段。仅影响 Obsidian/语雀/思源。">i</span>
           </div>
@@ -737,7 +737,7 @@
           <!-- 元数据字段子面板，勾选"添加元数据"后展开 -->
           <div id="metadataFieldsPanel" style="display:none; margin-left:24px; margin-top:10px; padding:12px 14px; background:var(--sub-bg); border:1px solid var(--input-border); border-radius:8px;">
             <div class="help-text" style="margin-bottom:10px; color:var(--text-muted); font-size:12px;" data-i18n="content.metadataNote">
-              仅影响 Obsidian / 语雀 / 思源的 Frontmatter 字段，飞书多维表格和 Notion 数据库字段不受影响。
+              此 fork 的 YAML 固定写 created / tags / source / author / title，不读下面的字段名。tags 固定为 clipping 加站点来源（linux.do → linuxdo）。
             </div>
             <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;" data-i18n="content.metadataFieldsHint">勾选字段 / 可自定义字段名（tags 固定为英文）</div>
 
@@ -747,28 +747,28 @@
               <div style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="metaSource" checked style="flex-shrink:0;">
                 <label for="metaSource" style="min-width:70px;font-size:13px;" data-i18n="meta.source">来源 URL</label>
-                <input type="text" id="metaSourceKey" value="来源" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
+                <input type="text" id="metaSourceKey" value="source" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="metaTitle" checked style="flex-shrink:0;">
                 <label for="metaTitle" style="min-width:70px;font-size:13px;" data-i18n="meta.title">标题</label>
-                <input type="text" id="metaTitleKey" value="标题" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
+                <input type="text" id="metaTitleKey" value="title" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="metaAuthor" checked style="flex-shrink:0;">
                 <label for="metaAuthor" style="min-width:70px;font-size:13px;" data-i18n="meta.author">作者</label>
-                <input type="text" id="metaAuthorKey" value="作者" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
+                <input type="text" id="metaAuthorKey" value="author" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaAuthorUrl" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaAuthorUrl" style="flex-shrink:0;">
                 <label for="metaAuthorUrl" style="font-size:13px;" data-i18n="meta.authorUrl">作者字段附带主页链接（[名](URL) 格式，可点击）</label>
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaCategory" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaCategory" style="flex-shrink:0;">
                 <label for="metaCategory" style="min-width:70px;font-size:13px;" data-i18n="meta.category">类别</label>
                 <input type="text" id="metaCategoryKey" value="类别" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
@@ -782,30 +782,30 @@
               <div style="display:flex;align-items:center;gap:8px;">
                 <input type="checkbox" id="metaSaveTime" checked style="flex-shrink:0;">
                 <label for="metaSaveTime" style="min-width:70px;font-size:13px;" data-i18n="meta.saveTime">保存时间</label>
-                <input type="text" id="metaSaveTimeKey" value="保存时间" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
+                <input type="text" id="metaSaveTimeKey" value="created" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaPlatform" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaPlatform" style="flex-shrink:0;">
                 <label for="metaPlatform" style="min-width:70px;font-size:13px;" data-i18n="meta.platform">平台（自动识别）</label>
                 <input type="text" id="metaPlatformKey" value="平台" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaReadStatus" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaReadStatus" style="flex-shrink:0;">
                 <label for="metaReadStatus" style="min-width:70px;font-size:13px;" data-i18n="meta.readStatus">阅读状态（默认 false）</label>
                 <input type="text" id="metaReadStatusKey" value="阅读状态" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaOrganize" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaOrganize" style="flex-shrink:0;">
                 <label for="metaOrganize" style="min-width:70px;font-size:13px;" data-i18n="meta.organize">整理（默认 false）</label>
                 <input type="text" id="metaOrganizeKey" value="整理" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
 
               <div style="display:flex;align-items:center;gap:8px;">
-                <input type="checkbox" id="metaCommentCount" checked style="flex-shrink:0;">
+                <input type="checkbox" id="metaCommentCount" style="flex-shrink:0;">
                 <label for="metaCommentCount" style="min-width:70px;font-size:13px;" data-i18n="meta.commentCount">评论数</label>
                 <input type="text" id="metaCommentCountKey" value="评论数" style="flex:1;padding:3px 6px;font-size:12px;border:1px solid var(--input-border);border-radius:4px;background:var(--input-bg);color:var(--text);">
               </div>
@@ -906,7 +906,7 @@
 
           <div class="form-group">
             <label data-i18n="obsidian.folder">保存文件夹</label>
-            <input type="text" id="folderPath" value="Discourse收集箱" data-i18n="obsidian.folderPlaceholder" placeholder="Discourse收集箱">
+            <input type="text" id="folderPath" value="Clippings/linuxdo" data-i18n="obsidian.folderPlaceholder" placeholder="Clippings/linuxdo">
             <div class="help-text" data-i18n="obsidian.folderHelpDetail2">支持多种路径格式：Linux do/子目录、D:\Vault\文件夹、/Users/me/vault/folder</div>
           </div>
 
@@ -1285,7 +1285,7 @@
       <!-- ==================== Tab: Comments ==================== -->
       <div class="tab-panel" id="tab-comments">
         <div class="checkbox-row">
-          <input type="checkbox" id="saveComments">
+          <input type="checkbox" id="saveComments" checked>
           <label for="saveComments" data-i18n="comments.saveComments">保存评论区</label>
         </div>
 
@@ -1299,7 +1299,7 @@
           </div>
 
           <div class="checkbox-row" style="margin-top: 8px;">
-            <input type="checkbox" id="saveAllComments">
+            <input type="checkbox" id="saveAllComments" checked>
             <label for="saveAllComments" data-i18n="comments.saveAllComments">保存全部</label>
           </div>
           <p id="allCommentsWarning" style="display: none; color: var(--warning); font-size: 12px; margin: 4px 0 8px 24px;" data-i18n="comments.saveAllWarning">
@@ -1347,7 +1347,7 @@
     <!-- Usage Tips -->
     <div style="padding: 0 24px 16px;">
       <div class="tip-box">
-        <p data-i18n="usage.tip"><strong>使用方法：</strong><br>- 点击悬浮保存按钮 → 保存整个帖子<br>- 长按悬浮按钮 → 选择楼层保存<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → 快捷键保存</p>
+        <p data-i18n="usage.tip"><strong>使用方法：</strong><br>- 点击悬浮保存按钮 → 保存主帖 + 全部回复<br>- 长按悬浮按钮 → 选择楼层保存<br>- Ctrl+Shift+S (Mac: ⌘+Shift+S) → 快捷键保存</p>
       </div>
     </div>
 
