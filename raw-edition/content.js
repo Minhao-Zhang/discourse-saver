@@ -2192,6 +2192,36 @@
     return turndownService;
   }
 
+  // 此 fork：把 Obsidian 会认成标签的 #词 改成 &#35;词，显示不变，不再进标签索引。
+  // 规则照 Obsidian：# 在行首或空白后，后面跟非空白、非 ASCII 标点（_ - / 除外）的字符，
+  // 且至少一个不是数字。中文标点算标签字符，所以「#3，来自」也会被转义；纯数字 #1、
+  // 标题「# 标题」、URL 锚点不受影响。frontmatter、代码块、行内代码原样跳过。
+  // 用 &#35; 而不是 \#，因为前者在 HTML 块和属性里同样生效。
+  function escapeObsidianInlineTags(markdown) {
+    if (!markdown) return markdown;
+    const TAG = /(^|\s)#(?=[^\s!-,.:-@[-^`{-~]*[^\s\d!-,.:-@[-^`{-~])/gu;
+    const escapeOutsideInlineCode = (line) =>
+      line.split(/(`+[^`]*?`+)/).map((part, i) => (i % 2 ? part : part.replace(TAG, '$1&#35;'))).join('');
+
+    const lines = markdown.split('\n');
+    let i = 0;
+    if (lines[0] === '---') {
+      const end = lines.indexOf('---', 1);
+      if (end !== -1) i = end + 1;
+    }
+    let fence = null;
+    for (; i < lines.length; i++) {
+      const m = lines[i].match(/^\s*(`{3,}|~{3,})/);
+      if (fence) {
+        if (m && m[1][0] === fence[0] && m[1].length >= fence.length) fence = null;
+        continue;
+      }
+      if (m) { fence = m[1]; continue; }
+      lines[i] = escapeOutsideInlineCode(lines[i]);
+    }
+    return lines.join('\n');
+  }
+
   // V3.2: 清理Markdown中的残留语法（保守版，不破坏正常链接和图片）
   // V3.6.0: 添加 keepGif 参数，在启用图片嵌入时保留 GIF 链接
   function cleanupMarkdown(markdown, keepGif = false) {
@@ -3406,6 +3436,10 @@
         markdown = await processMarkdownImages(markdown, config);
       }
       markdown = normalizeImageMarkdownFinal(markdown);
+      // 此 fork：正文里的 #词 会被 Obsidian 当成标签，只对 Obsidian 那份转义
+      if (shouldSaveToObsidian) {
+        markdown = escapeObsidianInlineTags(markdown);
+      }
 
       // 构建文件名：只用标题
       // V3.5.3: 单条评论模式时添加楼层号后缀
